@@ -1,0 +1,35 @@
+api_key: ADD_HEAR_API_KEY
+home_text: |
+    Sputnik Navigation Bot shows you market prices of pairs, that can be created with:
+    $ATOM 🔹 $KAVA 🔹 $IOV 🔹
+    $HARD 🔹 $USDX 🔹 $SCRT 🔹
+    
+    P2P-exchange bot for the Cosmos Ecosystem: @SputnikNetworkBot
+
+help_text: |
+    🛰️ Sputnik Navigation 🛰️ is a part of the Sputnik Network - from Community for Community project of the Cosmos Ecosystem
+    🛰️ Sputnik Navigation 🛰️ shows the current prices for all pairs, that can be traded at p2p-exchange of the Sputnik Network
+    
+    🔹 The actual price of tokens is taken from CoinGecko.com
+    
+    🔹 To receive, send and exchange tokens - use \"Sputnik\" button, or follow the @SputnikNetworkBot
+    
+    🔹 Video guide \"how to use the Sputnik: youtu.be/NwiI6xXkMcw
+    
+    🔹 Add 🛰️ Sputnik Navigation 🛰️ to any Telegram-group, and members will have ability to get data on prices of the Cosmos Ecosystem tokens
+    
+    🔹 If you have any questions, write to technical support: @SputnikNetwork
+    
+    Main group: @Sputnik_Network
+    
+    News channel: @SputnikDish
+    
+    Art channel: @TelescopeART
+    
+    Web: sputnik.exchange
+    
+    TW: twitter.com/SputnikNetwork
+
+tokens: cosmos,kava,secret,hard-protocol,usdx,starname
+tokens_sites: https://cosmos.network,https://kava.io,https://scrt.network,https://www.kava.io/hard-protocol,https://www.kava.io/,https://starname.me
+image_path: https://dpos.space/cosmos-prices/images/
