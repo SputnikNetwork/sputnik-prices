@@ -43,7 +43,7 @@ $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === 'help') {
     $msg = $conf['help_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
-    $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = 'Home';
+    $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($search_token >= 0) {
     if (isset($prices) && count($prices) > 0) {
