@@ -22,8 +22,9 @@ if (isset($arr['callback_query']['message']['chat']['id'])) $chat_id = $arr['cal
 if (isset($arr['message']['text'])) $text = $arr['message']['text'];
     $tokens_array = explode(",", $conf['tokens']);
     $action = mb_substr($text, 1);
+    $action = explode("@", $action)[0];
     $search_token = array_search($action, $tokens_array);
-    if ($text && $text === '/start') {
+    if ($text && $text === '/start' || $text && strpos($text, '/start') !== false) {
     $msg = $conf['home_text'];
     $arInfo["inline_keyboard"] = [];
     $tokens_count = count($tokens_array);
@@ -40,7 +41,7 @@ foreach ($prices as $token) {
     }
 }
 $tg->send($chat_id, $msg, 0, $arInfo);
-} else if ($text && $text === 'help') {
+} else if ($text && $text === '/help' || $text && strpos($text, '/help') !== false) {
     $msg = $conf['help_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
@@ -81,6 +82,6 @@ foreach ($prices as $ot) {
     }
 } // end foreach.
     } // end if prices.
-$tg->photo($chat_id, $msg, 0, $arInfo, $conf['image_path'].$text.'.jpg');
+    $tg->photo($chat_id, $msg, 0, $arInfo, $conf['image_path'].$action.'.jpg');
 } // end if
 ?>
