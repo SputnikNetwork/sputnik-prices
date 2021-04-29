@@ -47,7 +47,7 @@ class TG
             
             $data = array(
                 'chat_id' => $id,
-                'photo' => $photo_url,
+                'photo' => new CURLFile(realpath($photo_url)),
                 'caption' => $message,
                 'parse_mode' => 'HTML',
                 'reply_markup' => $encodedMarkup
@@ -127,6 +127,17 @@ class TG
         );
 
         $out = $this->request('forwardMessage', $data);
+        return $out;
+    }
+
+    public function delete($id, $msg_id)
+    {
+        $data = array(
+            'chat_id' => $id,
+            'message_id' => $msg_id
+        );
+
+        $out = $this->request('deleteMessage', $data);
         return $out;
     }
 
