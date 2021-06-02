@@ -6,6 +6,10 @@ home_text: |
     
     P2P-exchange bot for the Cosmos Ecosystem: @SputnikNetworkBot
 
+projects_text: "Enter the list of interesting projects in the chat, separated by commas. Example: cosmos,kava,mina-protocol. Send 0 to delete the list."
+projects_added: |
+ Ok. Chat projects added.
+
 help_text: |
     🛰️ Sputnik Navigation 🛰️ is a part of the Sputnik Network - from Community for Community project of the Cosmos Ecosystem
     🛰️ Sputnik Navigation 🛰️ shows the current prices for all pairs, that can be traded at p2p-exchange of the Sputnik Network
@@ -30,6 +34,6 @@ help_text: |
     
     TW: twitter.com/SputnikNetwork
 
-tokens: akash-network,band-protocol,binancecoin,certik,cosmos,fetch-ai,hard-protocol,iris-network,kava,ki,mina-protocol-iou,persistence,secret,sentinel,solana,starname,terra-luna,usdx
-tokens_sites: https://akash.network,https://bandprotocol.com/,https://binance.org,https://www.certik.foundation/,https://cosmos.network,https://fetch.ai/,https://www.kava.io/hard-protocol,https://www.irisnet.org/,https://kava.io,https://foundation.ki/,https://minaprotocol.com/,https://persistence.one/,https://scrt.network,https://sentinel.co/,https://solana.com/,https://starname.me,https://terra.money/,https://www.kava.io/overview
+tokens: akash-network,band-protocol,binancecoin,certik,cosmos,fetch-ai,hard-protocol,iris-network,kava,ki,mina-protocol,persistence,secret,sentinel,sifchain,solana,starname,terra-luna,usdx
+tokens_sites: https://akash.network,https://bandprotocol.com/,https://binance.org,https://www.certik.foundation/,https://cosmos.network,https://fetch.ai/,https://www.kava.io/hard-protocol,https://www.irisnet.org/,https://kava.io,https://foundation.ki/,https://minaprotocol.com/,https://persistence.one/,https://scrt.network,https://sentinel.co/,https://sifchain.finance/,https://solana.com/,https://starname.me,https://terra.money/,https://www.kava.io/overview
 image_path: https://dpos.space/cosmos-prices/images/

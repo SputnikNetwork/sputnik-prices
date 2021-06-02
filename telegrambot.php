@@ -6,7 +6,6 @@ use Symfony\Component\Yaml\Yaml;
 $conf = Yaml::parseFile('config.yaml');
 $api_key = $conf['api_key'];
 $tokens = str_replace(",", "%2C", $conf['tokens']);
-$prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
 
 $body = file_get_contents('php://input'); 
 $arr = json_decode($body, true); 
@@ -21,9 +20,17 @@ if (isset($arr['message']['chat']['id'])) $chat_id = $arr['message']['chat']['id
 if (isset($arr['callback_query']['message']['chat']['id'])) $chat_id = $arr['callback_query']['message']['chat']['id'];
     if (isset($arr['callback_query']['data'])) $text = $arr['callback_query']['data'];
 if (isset($arr['message']['text'])) $text = $arr['message']['text'];
-    $tokens_array = explode(",", $conf['tokens']);
     $action = mb_substr($text, 1);
     $action = explode("@", $action)[0];
+    $chats_projects = file_get_contents('chats_projects.json');
+    $cp = json_decode($chats_projects, true); 
+    if (isset($cp[$chat_id]) && $cp[$chat_id] !== '') {
+    $prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$cp[$chat_id].'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
+    $tokens_array = explode(",", $cp[$chat_id]);
+} else {
+    $prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
+    $tokens_array = explode(",", $conf['tokens']);
+}
     $search_token = array_search($action, $tokens_array);
     if ($text && $text === '/start' || $text && strpos($text, '/start') !== false) {
     $msg = $conf['home_text'];
@@ -47,7 +54,29 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $sended = $tg->send($chat_id, $msg, 0, $arInfo);
-} else if ($search_token >= 0) {
+} else if ($text && $text === '/projects' || $text && strpos($text, '/projects') !== false) {
+        $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
+if ($chat_user['result']['status'] === 'administrator') {
+    $msg = $conf['projects_text'];
+    $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
+    $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
+    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+}
+} else if (isset($arr['message']['reply_to_message']) && $conf['projects_text'] === $arr['message']['reply_to_message']['text']) {
+    $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
+    if ($chat_user['result']['status'] === 'administrator') {
+        if ($arr['message']['text'] === '0') {
+            unset($cp[$chat_id]);
+        } else {
+            $cp[$chat_id] = $arr['message']['text'];
+        }
+        file_put_contents('chats_projects.json', json_encode($cp));
+        $msg = $conf['projects_added'];
+        $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
+        $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    }
+} else if ($search_token !== false && $search_token >= 0) {
     if (isset($prices) && count($prices) > 0) {
         $token = $prices[$search_token];
         $token_price = $token['current_price'];
@@ -92,6 +121,7 @@ if ($chats && count($chats) > 0 && isset($chats[$chat_id])) {
 $msg_id = $chats[$chat_id];
 $tg->delete($chat_id, $msg_id);
 }
+
 $chats[$chat_id] = $sended['result']['message_id'];
 file_put_contents('chats.json', json_encode($chats));
 ?>
