@@ -68,7 +68,12 @@ if ($chat_user['result']['status'] === 'administrator') {
         if ($arr['message']['text'] === '0') {
             unset($cp[$chat_id]);
         } else {
-            $cp[$chat_id] = $arr['message']['text'];
+            $chat_prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$arr['message']['text'].'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
+$new_prices = [];
+            foreach ($chat_prices as $price) {
+                array_push($new_prices, $token['id'])
+}
+$cp[$chat_id] = implode(",", $new_prices);
         }
         file_put_contents('chats_projects.json', json_encode($cp));
         $msg = $conf['projects_added'];

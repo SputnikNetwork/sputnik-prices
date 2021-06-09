@@ -6,7 +6,7 @@ home_text: |
     
     P2P-exchange bot for the Cosmos Ecosystem: @SputnikNetworkBot
 
-projects_text: "Enter the list of interesting projects in the chat, separated by commas. Example: cosmos,kava,mina-protocol. Send 0 to delete the list."
+projects_text: "Enter the list of interesting projects in the chat, separated by commas. Example: cosmos,kava,mina-protocol. Send 0 to delete the list. Reply to this message."
 projects_added: |
  Ok. Chat projects added.
 
