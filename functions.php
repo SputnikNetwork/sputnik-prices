@@ -1,6 +1,6 @@
 <?php
 function getPage($url) {
-    $cache_url = 'caches/'.urlencode($url);
+    $cache_url = 'caches/'.urlencode(basename($url));
   $cache_file = $cache_url.'.cache';
     if(file_exists($cache_file)) {
       if(time() - filemtime($cache_file) > 60) {

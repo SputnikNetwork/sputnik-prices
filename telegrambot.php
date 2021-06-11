@@ -56,7 +56,7 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
     $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === '/projects' || $text && strpos($text, '/projects') !== false) {
         $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
-if ($chat_user['result']['status'] === 'administrator') {
+        if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator') {
     $msg = $conf['projects_text'].$conf['tokens'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
@@ -64,7 +64,7 @@ if ($chat_user['result']['status'] === 'administrator') {
 }
 } else if (isset($arr['message']['reply_to_message']) && $conf['projects_text'].$conf['tokens'] === $arr['message']['reply_to_message']['text']) {
     $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
-    if ($chat_user['result']['status'] === 'administrator') {
+    if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator') {
         if ($arr['message']['text'] === '0') {
             unset($cp[$chat_id]);
         } else {
