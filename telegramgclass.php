@@ -141,6 +141,17 @@ class TG
         return $out;
     }
 
+    public function getChatMember($id, $user_id)
+    {
+        $data = array(
+            'chat_id' => $id,
+            'user_id' => $user_id
+        );
+
+        $out = $this->request('getChatMember', $data);
+        return $out;
+    }
+
     public function getPhoto($data)
     {
         $out = $this->request('getFile', $data);
