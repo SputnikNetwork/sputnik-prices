@@ -34,6 +34,6 @@ help_text: |
     
     TW: twitter.com/SputnikNetwork
 
-tokens: akash-network,band-protocol,binancecoin,certik,cosmos,fetch-ai,hard-protocol,iris-network,kava,ki,mina-protocol,persistence,secret,sentinel,sifchain,solana,starname,terra-luna,usdx
-tokens_sites: https://akash.network,https://bandprotocol.com/,https://binance.org,https://www.certik.foundation/,https://cosmos.network,https://fetch.ai/,https://www.kava.io/hard-protocol,https://www.irisnet.org/,https://kava.io,https://foundation.ki/,https://minaprotocol.com/,https://persistence.one/,https://scrt.network,https://sentinel.co/,https://sifchain.finance/,https://solana.com/,https://starname.me,https://terra.money/,https://www.kava.io/overview
+tokens: akash-network,band-protocol,binancecoin,certik,cosmos,crypto-com-chain,fetch-ai,hard-protocol,iris-network,kava,ki,mina-protocol,persistence,secret,sentinel,sifchain,solana,starname,terra-luna,usdx
+tokens_sites: https://akash.network,https://bandprotocol.com/,https://binance.org,https://www.certik.foundation/,https://cosmos.network,https://www.crypto.com/en/chain,https://fetch.ai/,https://www.kava.io/hard-protocol,https://www.irisnet.org/,https://kava.io,https://foundation.ki/,https://minaprotocol.com/,https://persistence.one/,https://scrt.network,https://sentinel.co/,https://sifchain.finance/,https://solana.com/,https://starname.me,https://terra.money/,https://www.kava.io/overview
 image_path: https://dpos.space/cosmos-prices/images/
