@@ -48,13 +48,19 @@ foreach ($prices as $token) {
         $b_counter++;
     }
 }
+if ($arr['message']['chat']['id'] === $arr['message']['from']['id']) {
+    $arInfo2["keyboard"][0][0]["text"] = "filter the list";
+    $arInfo2["keyboard"][0][1]["text"] = "help";
+    $tg->send($chat_id, "Main menu...", 0, $arInfo2);
+    sleep(10);
+}
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
-} else if ($text && $text === '/help' || $text && strpos($text, '/help') !== false) {
+} else if ($text && $text === '/help' || $text && strpos($text, 'help') !== false || $text && $text === 'help') {
     $msg = $conf['help_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $sended = $tg->send($chat_id, $msg, 0, $arInfo);
-} else if ($text && $text === '/projects' || $text && strpos($text, '/projects') !== false) {
+} else if ($text && $text === '/projects' || $text && strpos($text, '/projects') !== false || $text && $text === 'filter the list' || $text && strpos($text, 'filter the list') !== false) {
         $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
         if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $arr['message']['chat']['id'] === $arr['message']['from']['id']) {
     $msg = $conf['projects_text'].$conf['tokens'];
