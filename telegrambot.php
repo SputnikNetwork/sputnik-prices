@@ -122,7 +122,8 @@ foreach ($prices as $ot) {
         $b_counter++;
     }
 } // end foreach.
-$sended = $tg->photo($chat_id, $msg, 0, $arInfo, __DIR__.'/images/'.mb_strtolower($token['symbol']).'.png');
+// $sended = $tg->photo($chat_id, $msg, 0, $arInfo, __DIR__.'/images/'.mb_strtolower($token['symbol']).'.png');
+$sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } // end if prices.
 } // end if
 
