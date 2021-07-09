@@ -1,5 +1,3 @@
-![sputnik_navigation_logo](https://user-images.githubusercontent.com/38581319/125036524-638e0c00-e093-11eb-90fe-ab359623bb14.png)
-
 # Sputnik prices bot
 Change config in config.yaml
 1. api_key
