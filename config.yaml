@@ -1,10 +1,13 @@
 api_key: ADD_HEAR_API_KEY
 home_text: |
-    Sputnik Navigation Bot shows you market prices of pairs, that can be created with:
-    $ATOM 🔹 $KAVA 🔹 $IOV 🔹
-    $HARD 🔹 $USDX 🔹 $SCRT 🔹
+    Sputnik Navigation shows prices for many different tokens not only to $, but also to each other!
     
-    P2P-exchange bot for the Cosmos Ecosystem: @SputnikNetworkBot
+    To program Sputnik Navigation shows only tokens that you want:
+    1) Send command /project —> Bot will send you message with the list of tokens
+    2) Reply to this message with the list of tokens that are need to be shown
+    3) Enjoy actual prices for interesting pairs in one click!
+    
+    Sputnik Navigation is an add-on for p2p-exchange @SputnikNetworkBot
 
 projects_text: "Enter the list of interesting projects in the chat, separated by commas. Names like in coingecko.Send 0 to delete the list. Reply to this message. Examples: "
 projects_added: |
