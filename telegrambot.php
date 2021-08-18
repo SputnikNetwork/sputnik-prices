@@ -52,6 +52,7 @@ if ($arr['message']['chat']['id'] === $arr['message']['from']['id']) {
     $arInfo2["keyboard"][0][1]["text"] = "filter the list";
     $arInfo2["keyboard"][0][2]["text"] = "My chats";
     $arInfo2["keyboard"][1][0]["text"] = "Check ETH address";
+    $arInfo2["keyboard"][1][0]["text"] = "Set GAS notify";
     $tg->send($chat_id, "Main menu...", 0, $arInfo2);
     sleep(3);
 }
