@@ -171,27 +171,56 @@ $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === '/set_gas' || $text && strpos($text, 'Set GAS notify') !== false || $text && $text === 'Set GAS notify') {
     $msg = $conf['gas_text'];
-    $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
-$arInfo["inline_keyboard"][0][0]['text'] = 'Home';
-    $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
-$arInfo["inline_keyboard"][0][1]['text'] = 'Help';
+    $arInfo["inline_keyboard"][0][0]["callback_data"] = '/off_gass';
+    $arInfo["inline_keyboard"][0][0]['text'] = 'Off';
+    $arInfo["inline_keyboard"][0][1]["callback_data"] = '/start';
+    $arInfo["inline_keyboard"][0][1]["callback_data"] = '/start';
+$arInfo["inline_keyboard"][0][1]['text'] = 'Home';
+    $arInfo["inline_keyboard"][0][2]["callback_data"] = '/help';
+$arInfo["inline_keyboard"][0][2]['text'] = 'Help';
     $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if (isset($arr['message']['reply_to_message']) && strpos($arr['message']['reply_to_message']['text'], $conf['gas_text']) !== false) {
     $chats_json = file_get_contents('chats.json');
     $chats = json_decode($chats_json, true); 
-    if ($chats && count($chats) > 0 && isset($chats[$chat_id])) {
+    $isValid = false;
+$gases = explode('-', $text);
+if (isset($gases) && count($gases) > 1 && is_numeric($gases[0]) && is_numeric($gases[1])) {
+$isValid = true;
+} else if (isset($gases) && count($gases) === 1 && is_numeric($gases[0])) {
+    $isValid = true;
+}
+$msg = 'GAS installed. You will receive a notification if it is reached.';
+
+    if ($chats && count($chats) > 0 && isset($chats[$chat_id]) && $isValid === true) {
         $chats[$chat_id]['gas'] = $text;
-    } else if ($chats && count($chats) > 0 && !isset($chats[$chat_id])) {
+    } else if ($chats && count($chats) > 0 && !isset($chats[$chat_id]) && $isValid === true) {
         $chats[$chat_id] = [];
         $chats[$chat_id]['gas'] = $text;
+    } else if ($isValid === false) {
+        $msg = 'You entered the data with an error. Please try again.';
     }
     
-    file_put_contents('chats.json', json_encode($chats));$msg = 'GAS installed. You will receive a notification if it is reached.';
+    file_put_contents('chats.json', json_encode($chats));
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
 $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
     $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+} else if ($text && $text === '/off_gas' || $text && strpos($text, '/off_gas') !== false) {
+    $chats_json = file_get_contents('chats.json');
+    $chats = json_decode($chats_json, true); 
+    $msg = "You didn't add any GAS settings";
+    if ($chats && count($chats) > 0 && isset($chats[$chat_id]) && isset($chats[$chat_id]['gas'])) {
+unset($chats[$chat_id]['gas']);
+    
+file_put_contents('chats.json', json_encode($chats));
+$msg = 'GAS settings was deleted';
+}
+$arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
+$arInfo["inline_keyboard"][0][0]['text'] = 'Home';
+$arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
+$arInfo["inline_keyboard"][0][1]['text'] = 'Help';
+$sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($search_token !== false && $search_token >= 0) {
     if (isset($prices) && count($prices) > 0) {
         $token = $prices[$search_token];

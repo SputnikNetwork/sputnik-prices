@@ -37,7 +37,7 @@ help_text: |
     
     TW: twitter.com/SputnikNetwork
 
-gas_text: "At what gas price should gwei send you a notification?  Send reply to this message."
+gas_text: "At what gas price should gwei send you a notification?  Send reply to this message. If you want to specify from-to, send it with a hyphen. For example, 25-35"
 
 tokens: akash-network,band-protocol,binancecoin,bitcoin,certik,cosmos,crypto-com-chain,ethereum,fetch-ai,hard-protocol,ion,iris-network,kava,ki,likecoin,mina-protocol,osmosis,persistence,regen,secret,sentinel,sifchain,solana,starname,terra-luna,usdx
 tokens_sites: https://akash.network,https://bandprotocol.com/,https://binance.org,https://www.bitcoin.org/,https://www.certik.foundation/,https://cosmos.network,https://www.crypto.com/en/chain,https://www.ethereum.org/,https://fetch.ai/,https://www.kava.io/hard-protocol,https://ionomy.com/,https://www.irisnet.org/,https://kava.io,https://foundation.ki/,https://like.co/,https://minaprotocol.com/,https://app.osmosis.zone,https://persistence.one/,https://www.regen.network/mainnet,https://scrt.network,https://sentinel.co/,https://sifchain.finance/,https://solana.com/,https://starname.me,https://terra.money/,https://www.kava.io/overview
