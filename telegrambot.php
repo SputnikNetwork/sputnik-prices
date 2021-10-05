@@ -55,6 +55,10 @@ if ($arr['message']['chat']['id'] === $arr['message']['from']['id']) {
     $arInfo2["keyboard"][1][0]["text"] = "Set GAS notify";
     $tg->send($chat_id, "Main menu...", 0, $arInfo2);
     sleep(3);
+} else {
+    $arInfo2["keyboard"] = 'DEL';
+    $tg->send($chat_id, "Main menu...", 0, $arInfo2);
+    sleep(3);
 }
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === '/help' || $text && strpos($text, 'help') !== false || $text && $text === 'help') {
