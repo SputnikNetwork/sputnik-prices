@@ -47,7 +47,7 @@ foreach ($prices as $token) {
         $b_counter++;
     }
 }
-if ($arr['message']['chat']['id'] === $arr['message']['from']['id']) {
+if ($arr['message']['chat']['id'] === $arr['message']['from']['id'] && strpos($arr['message']['chat']['id'], "-") === false) {
     $arInfo2["keyboard"][0][0]["text"] = "help";
     $arInfo2["keyboard"][0][1]["text"] = "filter the list";
     $arInfo2["keyboard"][0][2]["text"] = "My chats";
@@ -56,8 +56,8 @@ if ($arr['message']['chat']['id'] === $arr['message']['from']['id']) {
     $tg->send($chat_id, "Main menu...", 0, $arInfo2);
     sleep(3);
 } else {
-    $arInfo2["keyboard"] = 'DEL';
-    $tg->send($chat_id, "Main menu...", 0, $arInfo2);
+    $arInfo2 = 'DEL';
+    $tg->send($chat_id, "Loading...", 0, $arInfo2);
     sleep(3);
 }
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
