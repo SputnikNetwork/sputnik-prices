@@ -10,24 +10,33 @@ $tokens = str_replace(",", "%2C", $conf['tokens']);
 $body = file_get_contents('php://input'); 
 $arr = json_decode($body, true); 
 include_once ('telegramgclass.php');   
+$all_tokens = getPage('https://coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
 
 $tg = new tg($api_key);
 $sended = [];
 $chat_id;
+$from_id;
 $text;
 if (isset($arr['message']['chat']['id'])) $chat_id = $arr['message']['chat']['id'];
 if (isset($arr['callback_query']['message']['chat']['id'])) $chat_id = $arr['callback_query']['message']['chat']['id'];
-    if (isset($arr['callback_query']['data'])) $text = $arr['callback_query']['data'];
+if (isset($arr['message']['from']['id'])) $from_id = $arr['message']['from']['id'];
+if (isset($arr['message']['from']['id'])) $from_id = $arr['message']['from']['id'];
+
+if (isset($arr['callback_query']['data'])) $text = $arr['callback_query']['data'];
 if (isset($arr['message']['text'])) $text = $arr['message']['text'];
     $action = mb_substr($text, 1);
     $action = explode("@", $action)[0];
     $chats_projects = file_get_contents('chats_projects.json');
     $cp = json_decode($chats_projects, true); 
+    $prices = $all_tokens;
     if (isset($cp[$chat_id]) && $cp[$chat_id] !== '') {
-    $prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$cp[$chat_id].'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
+    foreach ($all_tokens as $key => $token) {
+        if (strpos($cp[$chat_id], $token['id']) === false) {
+unset($prices[$key]);
+        }
+    }
     $tokens_array = explode(",", $cp[$chat_id]);
 } else {
-    $prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
     $tokens_array = explode(",", $conf['tokens']);
 }
     $search_token = array_search($action, $tokens_array);
@@ -37,7 +46,8 @@ if (isset($arr['message']['text'])) $text = $arr['message']['text'];
     $tokens_count = count($tokens_array);
 $row = 0;
     $b_counter = 1;
-foreach ($prices as $token) {
+var_dump($all_tokens);
+    foreach ($prices as $token) {
     $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = '/'.$token['id'];
     $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($token['symbol']);
     if ($b_counter % 3 == 0) {
@@ -47,7 +57,7 @@ foreach ($prices as $token) {
         $b_counter++;
     }
 }
-if ($arr['message']['chat']['id'] === $arr['message']['from']['id'] && strpos($arr['message']['chat']['id'], "-") === false) {
+if ($chat_id === $from_id && strpos($chat_id, "-") === false) {
     $arInfo2["keyboard"][0][0]["text"] = "help";
     $arInfo2["keyboard"][0][1]["text"] = "filter the list";
     $arInfo2["keyboard"][0][2]["text"] = "My chats";
@@ -58,7 +68,7 @@ if ($arr['message']['chat']['id'] === $arr['message']['from']['id'] && strpos($a
 } else {
     $arInfo2 = 'DEL';
     $tg->send($chat_id, "Loading...", 0, $arInfo2);
-    sleep(3);
+    sleep(1);
 }
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === '/help' || $text && strpos($text, 'help') !== false || $text && $text === 'help') {
@@ -72,12 +82,8 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 $msg = 'Select chat with administration status.';
 
 $arInfo["inline_keyboard"] = [];
-$arInfo["inline_keyboard"][0][0]["callback_data"] = '/help';
-$arInfo["inline_keyboard"][0][0]["text"] = "Help";
-$arInfo["inline_keyboard"][0][1]["callback_data"] = '/start';
-$arInfo["inline_keyboard"][0][1]["text"] = "Home";
-$arInfo["inline_keyboard"][0][2]["url"] = 'https://t.me/SputnikNetworkBot';
-$arInfo["inline_keyboard"][0][2]["text"] = "Sputnik";
+$arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
+$arInfo["inline_keyboard"][0][0]["text"] = "Home";
 $tokens_count = count($tokens_array);
 $row = 1;
 $b_counter = 1;
@@ -98,8 +104,8 @@ $chatId = explode(' ', $action)[1];
 $chats_users = file_get_contents('users.json');
 $cu = json_decode($chats_users, true);
 $user_chat = $cu[$chat_id][$chatId];
-$chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
-if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $arr['message']['chat']['id'] === $arr['message']['from']['id']) {
+$chat_user = $tg->getChatMember($chat_id, $from_id);
+if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chat_id === $from_id) {
     $msg = 'Your chat is @'.$user_chat.' ('.$chatId.'). '.$conf['projects_text'].$conf['tokens'];
 } else {
 unset($cu[$chat_id][$chatId]);
@@ -108,12 +114,12 @@ $msg = 'You are no longer the administrator or owner of the chat @'.$user_chat;
 $arInfo = [];
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($text && $text === '/projects' || $text && strpos($text, '/projects') !== false || $text && $text === 'filter the list' || $text && strpos($text, 'filter the list') !== false) {
-        $chat_user = $tg->getChatMember($arr['message']['chat']['id'], $arr['message']['from']['id']);
-        if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $arr['message']['chat']['id'] === $arr['message']['from']['id']) {
-            if ($arr['message']['chat']['id'] !== $arr['message']['from']['id']) {
+        $chat_user = $tg->getChatMember($chat_id, $from_id);
+        if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chat_id === $from_id) {
+            if ($chat_id !== $from_id) {
                 $chats_users = file_get_contents('users.json');
                 $cu = json_decode($chats_users, true);
-                    $cu[$arr['message']['from']['id']][$arr['message']['chat']['id']] = $arr['message']['chat']['username'];
+                    $cu[$from_id][$chat_id] = (isset($arr['message']['chat']['username']) ? $arr['message']['chat']['username'] : $arr['callback_query']['message']['chat']['username']);
                                 file_put_contents('users.json', json_encode($cu));
             }
 
@@ -128,15 +134,16 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
         $id_str = explode('(', $arr['message']['reply_to_message']['text'])[1];
     $chatId = explode(').', $id_str)[0];
     }
-    $chat_user = $tg->getChatMember($chatId, $arr['message']['from']['id']);
-    if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chatId === $arr['message']['from']['id']) {
+    $chat_user = $tg->getChatMember($chatId, $from_id);
+    if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chatId === $from_id) {
         if ($arr['message']['text'] === '0') {
             unset($cp[$chatId]);
         } else {
-            $chat_prices = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$arr['message']['text'].'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
             $new_prices = [];
-            foreach ($chat_prices as $price) {
-                array_push($new_prices, $price['id']);
+            foreach ($prices as $price) {
+                if (strpos($arr['message']['text'], $price['id']) !== false) {
+                    array_push($new_prices, $price['id']);
+                }
 }
 $cp[$chatId] = implode(',', $new_prices);
         }
@@ -232,16 +239,9 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
     $msg = strtoupper($token['symbol']).'/USD: '.$token_price.'
 24 hours price change: '.$token['price_change_percentage_24h'].'%
 ';
-$tokens_sites = explode(",", $conf['tokens_sites']);
 $arInfo["inline_keyboard"] = [];
-$arInfo["inline_keyboard"][0][0]["url"] = $tokens_sites[$search_token];
-$arInfo["inline_keyboard"][0][0]["text"] = "Url";
-$arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
-$arInfo["inline_keyboard"][0][1]["text"] = "Help";
-$arInfo["inline_keyboard"][0][2]["url"] = 'https://t.me/SputnikNetworkBot';
-$arInfo["inline_keyboard"][0][2]["text"] = "Sputnik";
 $tokens_count = count($tokens_array);
-$row = 1;
+$row = 0;
 $b_counter = 1;
 foreach ($prices as $ot) {
     if ($ot['id'] !== $action) {
