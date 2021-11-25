@@ -10,7 +10,7 @@ $tokens = str_replace(",", "%2C", $conf['tokens']);
 $body = file_get_contents('php://input'); 
 $arr = json_decode($body, true); 
 include_once ('telegramgclass.php');   
-$all_tokens = getPage('https://coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
+$all_tokens = getPage('http://157.90.126.53/coingecko.php/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
 
 $tg = new tg($api_key);
 $sended = [];
@@ -29,17 +29,23 @@ if (isset($arr['message']['text'])) $text = $arr['message']['text'];
     $chats_projects = file_get_contents('chats_projects.json');
     $cp = json_decode($chats_projects, true); 
     $prices = $all_tokens;
+
     if (isset($cp[$chat_id]) && $cp[$chat_id] !== '') {
-    foreach ($all_tokens as $key => $token) {
+        foreach ($all_tokens as $key => $token) {
         if (strpos($cp[$chat_id], $token['id']) === false) {
 unset($prices[$key]);
-        }
+}
     }
+
+    sort($prices);
     $tokens_array = explode(",", $cp[$chat_id]);
 } else {
     $tokens_array = explode(",", $conf['tokens']);
 }
-    $search_token = array_search($action, $tokens_array);
+error_log(json_encode($prices));
+
+$search_token = array_search($action, $tokens_array);
+$search_token = array_search($action, $tokens_array);
     if ($text && $text === '/start' || $text && strpos($text, '/start') !== false) {
     $msg = $conf['home_text'];
     $arInfo["inline_keyboard"] = [];
