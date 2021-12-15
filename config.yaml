@@ -39,5 +39,5 @@ help_text: |
 
 gas_text: "At what gas price should gwei send you a notification?  Send reply to this message. If you want to specify from-to, send it with a hyphen. For example, 25-35"
 
-tokens: akash-network,band-protocol,binancecoin,bitcanna,bitcoin,bitsong,certik,cosmos,crypto-com-chain,e-money,e-money-eur,ethereum,fetch-ai,ion,iris-network,juno-network,kava,kava-lend,kava-swap,ki,likecoin,medibloc,mina-protocol,osmosis,persistence,regen,secret,sentinel,sifchain,solana,starname,terra-luna,terrausd,usdx,velas
+tokens: akash-network,band-protocol,binancecoin,bitcanna,bitcoin,bitsong,certik,cosmos,crypto-com-chain,e-money,e-money-eur,ethereum,fetch-ai,ion,iris-network,juno-network,kava,kava-lend,kava-swap,ki,likecoin,medibloc,mina-protocol,odin-protocol,osmosis,persistence,regen,secret,sentinel,sifchain,solana,ssv-network,starname,terra-luna,terrausd,usdx,velas
 image_path: https://dpos.space/cosmos-prices/images/
