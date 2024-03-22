@@ -7,11 +7,18 @@ $conf = Yaml::parseFile('config.yaml');
 $api_key = $conf['api_key'];
 $tokens = str_replace(",", "%2C", $conf['tokens']);
 
-$body = file_get_contents('php://input'); 
+$proxy = array(
+    'host' => 'http://190.185.108.176',
+    'port' => 9798,
+    'login' => 'TK6rD8',
+    'password' => 'vahX6X'
+  );
+  
+  $body = file_get_contents('php://input'); 
 $arr = json_decode($body, true); 
 include_once ('telegramgclass.php');   
-$all_tokens = getPage('https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&ids='.$tokens.'&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h');
-
+$cache = file_get_contents('caches/coingecko.cache');
+$all_tokens = json_decode($cache, true);
 $tg = new tg($api_key);
 $sended = [];
 $chat_id;

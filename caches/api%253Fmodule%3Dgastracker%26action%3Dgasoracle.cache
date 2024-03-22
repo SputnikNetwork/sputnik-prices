@@ -1,0 +1,1 @@
+{"status":"1","message":"OK-Missing/Invalid API Key, rate limit of 1/5sec applied","result":{"LastBlock":"19488783","SafeGasPrice":"21","ProposeGasPrice":"22","FastGasPrice":"22","suggestBaseFee":"20.983545381","gasUsedRatio":"0.500955233333333,0.4427463,0.4230165,0.558703166666667,0.1206096"}}
