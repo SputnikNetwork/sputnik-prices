@@ -5,7 +5,7 @@ use Symfony\Component\Yaml\Yaml;
 
 $conf = Yaml::parseFile('config.yaml');
 $api_key = $conf['api_key'];
-$tokens = str_replace(",", "%2C", $conf['tokens']);
+$tokens = explode(',', $conf['tokens']);
 
 $proxy = array(
     'host' => 'http://190.185.108.176',
@@ -17,7 +17,7 @@ $proxy = array(
   $body = file_get_contents('php://input'); 
 $arr = json_decode($body, true); 
 include_once ('telegramgclass.php');   
-$cache = file_get_contents('caches/coingecko.cache');
+$cache = file_get_contents('caches/osmosis.cache');
 $all_tokens = json_decode($cache, true);
 $tg = new tg($api_key);
 $sended = [];
@@ -28,7 +28,7 @@ if (isset($arr['message']['chat']['id'])) $chat_id = $arr['message']['chat']['id
 if (isset($arr['callback_query']['message']['chat']['id'])) $chat_id = $arr['callback_query']['message']['chat']['id'];
 if (isset($arr['callback_query']['chat']['id'])) $chat_id = $arr['callback_query']['chat']['id'];
 if (isset($arr['message']['from']['id'])) $from_id = $arr['message']['from']['id'];
-if (isset($arr['callback_query']['message']['from']['id'])) $from_id = $arr['callback_query']['message']['from']['id'];
+if (isset($arr['callback_query']['from']['id'])) $from_id = $arr['callback_query']['from']['id'];
 
 if (isset($arr['callback_query']['data'])) $text = $arr['callback_query']['data'];
 if (isset($arr['message']['text'])) $text = $arr['message']['text'];
@@ -39,29 +39,28 @@ $action = mb_substr($text, 1);
     $cp = json_decode($chats_projects, true); 
     if (!is_array($all_tokens)) return;
     $prices = $all_tokens;
-    if (isset($chat_id) && isset($cp[$chat_id]) && $cp[$chat_id] !== '') {
+$tokens_list = [];
         foreach ($all_tokens as $key => $token) {
-        if (strpos($cp[$chat_id], $token['id']) === false) {
+            if (isset($cp[$chat_id]) && $cp[$chat_id] !== '' && array_search($token['symbol'], explode(',', $cp[$chat_id])) === false) {
 unset($prices[$key]);
-}
-    }
-    
-    sort($prices);
-    $tokens_array = explode(",", $cp[$chat_id]);
+            } else if (isset($tokens) && $tokens !== '' && array_search($token['symbol'], $tokens) === false) {
+    unset($prices[$key]);
 } else {
-    $tokens_array = explode(",", $conf['tokens']);
+    array_push($tokens_list, $prices[$key]['symbol']);
 }
+if (isset($tokens) && $tokens !== '' && array_search($token['symbol'], $tokens) === false) unset($all_tokens[$key]);
+}
+    $prices = array_values($prices);
 
-$search_token = array_search($action, $tokens_array);
-$search_token = array_search($action, $tokens_array);
+$search_token = array_search($action, $tokens_list);
     if (isset($text) && $text === '/start' || isset($text) && strpos($text, '/start') !== false) {
     $msg = $conf['home_text'];
     $arInfo["inline_keyboard"] = [];
-    $tokens_count = count($tokens_array);
+    $tokens_count = count($tokens_list);
 $row = 0;
     $b_counter = 1;
     foreach ($prices as $token) {
-    $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = '/'.$token['id'];
+    $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = '/'.$token['symbol'];
     $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($token['symbol']);
     if ($b_counter % 3 == 0) {
         $row++;
@@ -97,7 +96,7 @@ $msg = 'Select chat with administration status.';
 $arInfo["inline_keyboard"] = [];
 $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
 $arInfo["inline_keyboard"][0][0]["text"] = "Home";
-$tokens_count = count($tokens_array);
+$tokens_count = count($tokens_list);
 $row = 1;
 $b_counter = 1;
 $user_chats = $cu[(string)$chat_id];
@@ -132,16 +131,105 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
             if ($chat_id !== $from_id) {
                 $chats_users = file_get_contents('users.json');
                 $cu = json_decode($chats_users, true);
-                                    if (!isset($arr['callback_query']) && !isset($arr['message']['chat']['username'])) error_log(json_encode($arr));
                 $cu[$from_id][$chat_id] = (isset($arr['message']['chat']['username']) ? $arr['message']['chat']['username'] : $arr['callback_query']['message']['chat']['username']);
                                 file_put_contents('users.json', json_encode($cu));
             }
-
-                            $msg = $conf['projects_text'].$conf['tokens'];
-    $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
-    $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
-    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+if (strpos($text, '/projects 0') !== false) {
+    unset($cp[$chat_id]);
+    file_put_contents('chats_projects.json', json_encode($cp));
 }
+                            $msg = $conf['projects_text'].$conf['tokens'];
+                            $arInfo["inline_keyboard"] = [];
+                            $tokens_count = count($tokens_list);
+                        $row = 0;
+                            $b_counter = 1;
+                            foreach ($all_tokens as $token) {
+                                if (isset($cp[$chat_id]) && array_search($token['symbol'], explode(',', $cp[$chat_id])) !== false) continue;
+                                                                    $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = 'addf '.$token['symbol'];
+                            $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($token['symbol']);
+                            if ($b_counter % 3 == 0) {
+                                $row++;
+                                $b_counter = 1;
+                            } else {
+                                $b_counter++;
+                            }
+                        }
+$add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
+if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);
+array_push($arInfo["inline_keyboard"], $add_buttons);
+                        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+}
+} else if (isset($text) && strpos($text, 'addf ') !== false) {
+    $chat_user = $tg->getChatMember($chat_id, $from_id);
+    if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chat_id === $from_id) {
+            $token_id = explode(' ', $text)[1];
+            if (!isset($cp[$chat_id])) $cp[$chat_id] = "";
+            $new_prices = ($cp[$chat_id] !== '' ? explode(',', $cp[$chat_id]) : []);
+            foreach ($all_tokens as $price) {
+                if ($price['symbol'] === $token_id) {
+                    array_push($new_prices, $price['symbol']);
+                }
+}
+$cp[$chat_id] = implode(',', $new_prices);
+        file_put_contents('chats_projects.json', json_encode($cp));
+        $msg = $conf['projects_added'];
+        $arInfo["inline_keyboard"] = [];
+        $tokens_count = count($tokens_list);
+    $row = 0;
+        $b_counter = 1;
+        foreach ($all_tokens as $token) {
+            if (array_search($token['symbol'], explode(',', $cp[$chat_id])) !== false) continue;
+                                                $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = 'addf '.$token['symbol'];
+        $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($token['symbol']);
+        if ($b_counter % 3 == 0) {
+            $row++;
+            $b_counter = 1;
+        } else {
+            $b_counter++;
+        }
+    }
+    $add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
+    if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);
+    array_push($arInfo["inline_keyboard"], $add_buttons);
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    }
+} else if (isset($text) && strpos($text, 'delete_filter') !== false) {
+    $chat_user = $tg->getChatMember($chat_id, $from_id);
+    if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chat_id === $from_id) {
+        $token_id = '';
+        if (strpos($text, ' ') !== false) $token_id = explode(' ', $text)[1];
+        $chat_projects = explode(',', $cp[$chat_id]);
+        if (!isset($token_id) || isset($token_id) && $token_id === '') {
+                $msg = $conf['delete_projects'];
+            } else {
+                $index = array_search($token_id, $chat_projects);
+                if ($index !== false) {
+                    unset($chat_projects[$index]);
+                    $msg = $conf['project_deleted'];
+                }
+                }
+                $cp[$chat_id] = implode(',', $chat_projects);
+                file_put_contents('chats_projects.json', json_encode($cp));
+        $arInfo["inline_keyboard"] = [];
+        $tokens_count = count($tokens_list);
+    $row = 0;
+        $b_counter = 1;
+        foreach ($all_tokens as $token) {
+                                                if (array_search($token['symbol'], $chat_projects) === false) continue;
+            $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = 'delete_filter '.$token['symbol'];
+        $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($token['symbol']);
+        if ($b_counter % 3 == 0) {
+            $row++;
+            $b_counter = 1;
+        } else {
+            $b_counter++;
+        }
+    }
+$add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
+if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);    
+array_push($arInfo["inline_keyboard"], $add_buttons);
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    }
 } else if (isset($arr['message']['reply_to_message']) && isset($arr['message']['reply_to_message']['text']) && strpos($arr['message']['reply_to_message']['text'], $conf['projects_text'].$conf['tokens']) !== false) {
     $chatId = $arr['message']['chat']['id'];
     if (strpos($arr['message']['reply_to_message']['text'], '(-') !== false) {
@@ -155,8 +243,8 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
         } else {
             $new_prices = [];
             foreach ($prices as $price) {
-                if (strpos($arr['message']['text'], $price['id']) !== false) {
-                    array_push($new_prices, $price['id']);
+                if (strpos($arr['message']['text'], $price['symbol']) !== false) {
+                    array_push($new_prices, $price['symbol']);
                 }
 }
 $cp[$chatId] = implode(',', $new_prices);
@@ -247,25 +335,25 @@ $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
 $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 } else if ($search_token !== false && $search_token >= 0) {
-    if (isset($prices) && count($prices) > 0) {
+    if (isset($tokens_list) && count($tokens_list) > 0) {
         $token = $prices[$search_token];
-        $token_price = $token['current_price'];
+        $token_price = $token['price'];
     $msg = strtoupper($token['symbol']).'/USD: '.$token_price.'
-24 hours price change: '.$token['price_change_percentage_24h'].'%
+24 hours price change: '.$token['price_24h_change'].'%
 ';
 $arInfo["inline_keyboard"] = [];
-$tokens_count = count($tokens_array);
+$tokens_count = count($tokens_list);
 $row = 0;
 $b_counter = 1;
 foreach ($prices as $ot) {
-    if ($ot['id'] !== $action) {
-        $ot_price = $ot['current_price'];
+    if ($ot['symbol'] !== $action) {
+        $ot_price = $ot['price'];
     $result_price = round($token_price / $ot_price, 4);
         $msg .= '
     '.strtoupper($token['symbol']).'/'.strtoupper($ot['symbol']).': '.$result_price;
     } // end if symbol === text.
 
-        $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = '/'.$ot['id'];
+        $arInfo["inline_keyboard"][$row][$b_counter-1]["callback_data"] = '/'.$ot['symbol'];
     $arInfo["inline_keyboard"][$row][$b_counter-1]['text'] = strtoupper($ot['symbol']);
     if ($b_counter % 3 == 0) {
         $row++;

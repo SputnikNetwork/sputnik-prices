@@ -3,7 +3,9 @@ function getPage($url, $proxy = null) {
   $cache_url = 'caches/' . urlencode(basename($url));
   if (strpos($url, 'coingecko') !== false) {
       $cache_url = 'caches/coingecko';
-  } else if (strpos($url, "api.etherscan.io/api?module=account&action=balance") !== false) {
+  } else if (strpos($url, 'osmosis') !== false) {
+        $cache_url = 'caches/osmosis';
+    } else if (strpos($url, "api.etherscan.io/api?module=account&action=balance") !== false) {
       $params = explode("&address=", $url)[1];
       $address = explode("&tag=latest", $params)[0];
       $cache_url = 'caches/balance_' . $address;

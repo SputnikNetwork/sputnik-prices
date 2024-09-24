@@ -9,15 +9,17 @@ home_text: |
     
     Sputnik Navigation is an add-on for p2p-exchange @SputnikNetworkBot
 
-projects_text: "Enter the list of interesting projects in the chat, separated by commas. Names like in coingecko.Send 0 to delete the list. Reply to this message. Examples: "
+projects_text: "Enter the list of interesting projects in the chat, separated by commas. Names like in coincap.io.Send 0 to delete the list. Reply to this message. Or select token in buttons. Examples: "
 projects_added: |
  Ok. Chat projects added.
+delete_projects: "Select the project to remove from the filter."
+project_deleted: "The project has been deleted. Select another one to delete in the buttons."
 
 help_text: |
     🛰️ Sputnik Navigation 🛰️ is a part of the Sputnik Network - from Community for Community project of the Cosmos Ecosystem
     🛰️ Sputnik Navigation 🛰️ shows the current prices for all pairs, that can be traded at p2p-exchange of the Sputnik Network
     
-    🔹 The actual price of tokens is taken from CoinGecko.com
+    🔹 The actual price of tokens is taken from coincap.io
     
     🔹 To receive, send and exchange tokens - use \"Sputnik\" button, or follow the @SputnikNetworkBot
     
@@ -39,6 +41,5 @@ help_text: |
 
 gas_text: "At what gas price should gwei send you a notification?  Send reply to this message. If you want to specify from-to, send it with a hyphen. For example, 25-35"
 
-
-tokens: akash-network,assetmantle,band-protocol,binancecoin,bitcanna,bitcoin,bitsong,bostrom,cerberus-2,certik,chihuahua-token,comdex,cosmos,crypto-com-chain,e-money,e-money-eur,ethereum,evmos,fetch-ai,firmachain,graviton,ion,iris-network,juno-network,kava,kava-lend,kava-swap,ki,likecoin,lum-network,medibloc,mina-protocol,neta,odin-protocol,osmosis,persistence,posthuman,pstake-finance,regen,rizon,secret,sentinel,sifchain,solana,ssv-network,stargaze,starname,switcheo,terra-luna,terra-luna-2,terrausd,umee,usdx,velas
-image_path: https://dpos.space/cosmos-prices/images/
+tokens: BLD,AKT,ARCH,MNTL,ASTRO,AURA,AXL,BAND,BNB,BCNA,BTC,CONE,BTSG,BOOT,TIA,CTK,HUAHUA,CMDX,ATOM,CRE,CRO,DSM,DYDX,DYM,NGM,ETH,EVMOS,FET,FCT,HEART,INJ,ION,IRIS,JUNO,KAVA,HARD,SWP,XKI,KUJI,KYVE,LAMB,LIKE,LUM,MINA,NETA,NTRN,ODIN,FLIX,NOM,ORAI,OSMO,XPRT,PHMN,PSTAKE,QCK,REGEN,ATOLO,SCRT,DVPN,EROWAN,SOL,SOMM,SOURCE,SSV,STARS,IOV,STRD,LUNC,TGD,UX,USDX,WHALE,,ZETA
+image_path: https://URL/cosmos-prices/images/

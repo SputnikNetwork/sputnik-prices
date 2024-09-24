@@ -12,7 +12,7 @@ Change config in config.yaml
 composer install
 3. Add to cron files:
 3.1. cronbot.php
-3.2. coingecko_cron.php
+3.2. osmosis_cron.php
 4. Add webhook to Telegram bot api with url:
 https://api.telegram.org/botAPI_KEY/setWebhook?url=URL_TO_telegrambot.php
 With changeing API_KEY to bot api key and URL_TO_ to your path to the file telegrambot.php.
