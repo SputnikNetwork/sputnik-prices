@@ -29,6 +29,9 @@ if (isset($arr['callback_query']['message']['chat']['id'])) $chat_id = $arr['cal
 if (isset($arr['callback_query']['chat']['id'])) $chat_id = $arr['callback_query']['chat']['id'];
 if (isset($arr['message']['from']['id'])) $from_id = $arr['message']['from']['id'];
 if (isset($arr['callback_query']['from']['id'])) $from_id = $arr['callback_query']['from']['id'];
+$message_thread_id;
+if (isset($arr['message']['message_thread_id'])) $message_thread_id = $arr['message']['message_thread_id'];
+if (isset($arr['callback_query']['message']['message_thread_id'])) $message_thread_id = $arr['callback_query']['message']['message_thread_id'];
 
 if (isset($arr['callback_query']['data'])) $text = $arr['callback_query']['data'];
 if (isset($arr['message']['text'])) $text = $arr['message']['text'];
@@ -75,19 +78,19 @@ if ($chat_id === $from_id && strpos($chat_id, "-") === false) {
     $arInfo2["keyboard"][0][2]["text"] = "My chats";
     $arInfo2["keyboard"][1][0]["text"] = "Check ETH address";
     $arInfo2["keyboard"][1][0]["text"] = "Set GAS notify";
-    $tg->send($chat_id, "Main menu...", 0, $arInfo2);
+    $tg->send($chat_id, "Main menu...", 0, $arInfo2, $message_thread_id);
     sleep(3);
 } else {
     $arInfo2 = 'DEL';
-    $tg->send($chat_id, "Loading...", 0, $arInfo2);
+    $tg->send($chat_id, "Loading...", 0, $arInfo2, $message_thread_id);
     sleep(1);
 }
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && $text === '/help' || isset($text) && strpos($text, 'help') !== false || isset($text) && $text === 'help') {
     $msg = $conf['help_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
-    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && $text === '/chats' || isset($text) && strpos($text, '/chats') !== false || isset($text) && $text === 'My chats' || isset($text) && strpos($text, 'My chats') !== false) {
     $chats_users = file_get_contents('users.json');
     $cu = json_decode($chats_users, true);
@@ -110,7 +113,7 @@ foreach($user_chats as $chatId => $login) {
         $b_counter++;
     }
 } // end foreach.
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && strpos($action, 'chat ') !== false) {
 $chatId = explode(' ', $action)[1];
 $chats_users = file_get_contents('users.json');
@@ -124,7 +127,7 @@ unset($cu[$chat_id][$chatId]);
 $msg = 'You are no longer the administrator or owner of the chat @'.$user_chat;
 }
 $arInfo = [];
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && $text === '/projects' || isset($text) && strpos($text, '/projects') !== false || isset($text) && $text === 'filter the list' || isset($text) && strpos($text, 'filter the list') !== false) {
         $chat_user = $tg->getChatMember($chat_id, $from_id);
         if ($chat_user['result']['status'] === 'creator' || $chat_user['result']['status'] === 'administrator' || $chat_id === $from_id) {
@@ -157,7 +160,7 @@ if (strpos($text, '/projects 0') !== false) {
 $add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
 if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);
 array_push($arInfo["inline_keyboard"], $add_buttons);
-                        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+                        $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 }
 } else if (isset($text) && strpos($text, 'addf ') !== false) {
     $chat_user = $tg->getChatMember($chat_id, $from_id);
@@ -191,7 +194,7 @@ $cp[$chat_id] = implode(',', $new_prices);
     $add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
     if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);
     array_push($arInfo["inline_keyboard"], $add_buttons);
-        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
     }
 } else if (isset($text) && strpos($text, 'delete_filter') !== false) {
     $chat_user = $tg->getChatMember($chat_id, $from_id);
@@ -228,7 +231,7 @@ $cp[$chat_id] = implode(',', $new_prices);
 $add_buttons = [['callback_data' => 'delete_filter', 'text' => 'Delete filter'], ['callback_data' => '/start', 'text' => 'Home']];
 if (isset($cp[$chat_id]) && $cp[$chat_id] !== "") array_unshift($add_buttons, ['callback_data' => '/projects 0', 'text' => 'All coins']);    
 array_push($arInfo["inline_keyboard"], $add_buttons);
-        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
     }
 } else if (isset($arr['message']['reply_to_message']) && isset($arr['message']['reply_to_message']['text']) && strpos($arr['message']['reply_to_message']['text'], $conf['projects_text'].$conf['tokens']) !== false) {
     $chatId = $arr['message']['chat']['id'];
@@ -253,7 +256,7 @@ $cp[$chatId] = implode(',', $new_prices);
         $msg = $conf['projects_added'];
         $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
         $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
-        $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+        $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
     }
 } else if (isset($text) && $text === '/send_address' || isset($text) && strpos($text, 'Check ETH address') !== false || isset($text) && $text === 'Check ETH address') {
     $msg = 'Send Ethereum address.';
@@ -261,10 +264,10 @@ $cp[$chatId] = implode(',', $new_prices);
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
         $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
     $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
-    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && strpos($text, '0x') !== false) {
     $arInfo = [];
-    $tg->send($chat_id, 'Please wait. The data is being loaded...', 0, $arInfo);
+    $tg->send($chat_id, 'Please wait. The data is being loaded...', 0, $arInfo, $message_thread_id);
     $eth_res = getPage('https://api.etherscan.io/api?module=account&action=balance&address='.$text.'&tag=latest');
     $eth_balance = (float)$eth_res['result'] / (10 ** 18);
     sleep(1);
@@ -281,7 +284,7 @@ $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
 $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && $text === '/set_gas' || isset($text) && strpos($text, 'Set GAS notify') !== false || isset($text) && $text === 'Set GAS notify') {
     $msg = $conf['gas_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/off_gass';
@@ -291,7 +294,7 @@ $sended = $tg->send($chat_id, $msg, 0, $arInfo);
 $arInfo["inline_keyboard"][0][1]['text'] = 'Home';
     $arInfo["inline_keyboard"][0][2]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][2]['text'] = 'Help';
-    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($arr['message']['reply_to_message']) && isset($arr['message']['reply_to_message']['text']) && strpos($arr['message']['reply_to_message']['text'], $conf['gas_text']) !== false) {
     $chats_json = file_get_contents('chats.json');
     $chats = json_decode($chats_json, true); 
@@ -318,7 +321,7 @@ $msg = 'GAS installed. You will receive a notification if it is reached.';
 $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
     $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
-    $sended = $tg->send($chat_id, $msg, 0, $arInfo);
+    $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if (isset($text) && $text === '/off_gas' || isset($text) && strpos($text, '/off_gas') !== false) {
     $chats_json = file_get_contents('chats.json');
     $chats = json_decode($chats_json, true); 
@@ -333,13 +336,13 @@ $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
 $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
 $arInfo["inline_keyboard"][0][1]["callback_data"] = '/help';
 $arInfo["inline_keyboard"][0][1]['text'] = 'Help';
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } else if ($search_token !== false && $search_token >= 0) {
     if (isset($tokens_list) && count($tokens_list) > 0) {
         $token = $prices[$search_token];
         $token_price = $token['price'];
     $msg = strtoupper($token['symbol']).'/USD: '.$token_price.'
-24 hours price change: '.$token['price_24h_change'].'%
+24 hours price change: '.number_format($token['price_24h_change'], 2).'%
 ';
 $arInfo["inline_keyboard"] = [];
 $tokens_count = count($tokens_list);
@@ -363,7 +366,7 @@ foreach ($prices as $ot) {
     }
 } // end foreach.
 // $sended = $tg->photo($chat_id, $msg, 0, $arInfo, __DIR__.'/images/'.mb_strtolower($token['symbol']).'.png');
-$sended = $tg->send($chat_id, $msg, 0, $arInfo);
+$sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
 } // end if prices.
 } // end if
 

@@ -9,16 +9,16 @@ class TG
         $this->token = $token;
     }
 
-    public function send($id, $message, $reply_to_message_id, $keyboard)
+    public function send($id, $message, $reply_to_message_id, $keyboard, $message_thread_id)
     {
         //Удаление клавы
         if ($keyboard == "DEL") $keyboard = array('remove_keyboard' => true);
-
         if ($keyboard) { //Отправка клавиатуры
             $keyboard["resize_keyboard"] = true;
             $encodedMarkup = json_encode($keyboard);
             $data = array(
                 'chat_id' => $id,
+                'message_thread_id' => $message_thread_id,
                 'text' => $message,
                 'parse_mode' => 'HTML',
                 'reply_markup' => $encodedMarkup
