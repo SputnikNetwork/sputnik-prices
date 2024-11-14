@@ -54,10 +54,9 @@ unset($prices[$key]);
 if (isset($tokens) && $tokens !== '' && array_search($token['symbol'], $tokens) === false) unset($all_tokens[$key]);
 }
     $prices = array_values($prices);
-
 $search_token = array_search($action, $tokens_list);
     if (isset($text) && $text === '/start' || isset($text) && strpos($text, '/start') !== false) {
-    $msg = $conf['home_text'];
+        $msg = $conf['home_text'];
     $arInfo["inline_keyboard"] = [];
     $tokens_count = count($tokens_list);
 $row = 0;
@@ -86,7 +85,7 @@ if ($chat_id === $from_id && strpos($chat_id, "-") === false) {
     sleep(1);
 }
 $sended = $tg->send($chat_id, $msg, 0, $arInfo, $message_thread_id);
-} else if (isset($text) && $text === '/help' || isset($text) && strpos($text, 'help') !== false || isset($text) && $text === 'help') {
+} else if (isset($text) && $text === '/help' || isset($text) && $text === 'help') {
     $msg = $conf['help_text'];
     $arInfo["inline_keyboard"][0][0]["callback_data"] = '/start';
     $arInfo["inline_keyboard"][0][0]['text'] = 'Home';
